@@ -1,0 +1,7 @@
+opencv-python-headless  # The core CV library (headless is lighter for servers)
+ultralytics             # YOLOv8 for object detection
+supervision             # Helper for drawing zones and tracking
+streamlink              # Connects to Twitch
+python-dotenv           # Manages secrets (API Keys)
+requests                # For calling TBA API
+numpy                   # Math for the field mapping
