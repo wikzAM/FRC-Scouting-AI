@@ -1,7 +1,37 @@
-venv/
+# --- Python Basics ---
 __pycache__/
+*.py[cod]
+venv/
+.env
+
+# --- VS Code Settings ---
+.vscode/
+
+# --- Large Data Files (DO NOT COMMIT) ---
 *.mp4
 *.avi
-.env
-.DS_Store
+*.mov
+*.mkv
+
+# --- Datasets ---
+FRC_Dataset/
+datasets/
+
+# --- Training Results ---
+# We usually ignore the training logs because they get messy.
+# You might want to manually force-add your best.pt later, 
+# but ignore the folder generally.
+runs/
+
+# --- Roboflow Downloads ---
+*.zip
+
+# --- Base Models ---
+# Ignore the standard YOLO weights (we only want OUR custom ones)
+yolo*.pt
+
+# --- Security ---
+# If your downloader script has your API Key inside it, ignore it!
+download_data.py
+
 data/

@@ -7,8 +7,13 @@ from vision import ObjectDetector
 def main():
     # --- CONFIG ---
     # Use a Twitch stream (e.g., 'firstinspires') or a file path
-    STREAM_URL = "https://www.twitch.tv/ishowspeed"
-    IS_LIVE = True 
+    #STREAM_URL = "https://www.twitch.tv/ishowspeed"
+    #IS_LIVE = True
+    # --- CONFIGURATION ---
+
+    # Use local file for training data collection
+    STREAM_URL = "data/raw/match_video.mp4" # Make sure this matches your file name
+    IS_LIVE = False
 
     # --- INITIALIZATION ---
     print("1. Initializing Capture...")
@@ -22,7 +27,9 @@ def main():
     detector = ObjectDetector()
 
     print("3. Starting Loop. Click video window and press 'q' to quit.")
-    
+    cv2.namedWindow("FRC AI Scout", cv2.WINDOW_NORMAL)
+
+    cv2.resizeWindow("FRC AI Scout", 1280, 720)
     prev_time = 0 
 
     try:
@@ -43,14 +50,19 @@ def main():
             detections = detector.detect(frame)
             # --- PHASE 3: RENDER ---
             # Loop through the data and draw it
-            for (x1, y1, x2, y2, conf) in detections:
+            for (x1, y1, x2, y2, conf, class_id, track_id) in detections:
                 # Draw the rectangle
-                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                if class_id == 0:
+                    color = (255, 0, 0) #Blue in BGR
+                    label = f"blue {track_id} {conf:.2f}"
+                else:
+                    color = (0, 0, 255) #Red in BGR
+                    label = f"red {track_id} {conf:.2f}"
+                cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
                 
-                # Draw the label (using the math we discussed: y - 10)
-                label = f"Robot: {conf:.2f}"
+                    
                 cv2.putText(frame, label, (x1, max(0, y1 - 10)), 
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
             # --- FPS COUNTER (Pure Math) ---
             curr_time = time.time()
@@ -67,11 +79,12 @@ def main():
 
             
             # Exit Logic (Press 'q')
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            key = cv2.waitKey(1) & 0xFF
+            if key ==ord('q'):
                 break
             
             # Press 's' to save a Snapshot for training
-            if key == ord('s'):
+            elif key == ord('s'):
                 # Create a unique filename using the timestamp
                 filename = f"data/raw/train_{int(time.time())}.jpg"
                 cv2.imwrite(filename, frame)
